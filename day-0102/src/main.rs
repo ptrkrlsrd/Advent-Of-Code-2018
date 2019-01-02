@@ -1,9 +1,14 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::collections::HashSet;
+use std::collections::HashMap;
 
 fn main () {
     let file = File::open("./data.txt").unwrap();
+    let sum = read(file);
+    println!("{}", sum);
+}
+
+fn read(file: File) -> i32 {
     let reader = BufReader::new(file);
     let mut sum = 0;
     let lines = reader.lines().map(| i | i.unwrap());
@@ -13,17 +18,18 @@ fn main () {
              .parse::<i32>()
              .unwrap());
     
-    let mut seen: HashSet<i32> = HashSet::new();
+    let mut history = HashMap::new();
 
     for i in changes {
         sum += i;
-        if seen.contains(&sum) {
-            println!("{}", sum);
-            break;
-        } else {
-            seen.insert(sum);
-        }
+        *history.entry(sum).or_insert(0) += 1;
     };
-    
-    println!("{}", sum);
+
+    for i in history.keys() {
+        if history.get(i).unwrap() > &1 {
+            println!("{}: {}", i, history.get(i).unwrap());
+        }
+    }
+
+    return sum;
 }
