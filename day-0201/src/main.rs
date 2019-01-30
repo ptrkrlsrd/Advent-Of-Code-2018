@@ -3,14 +3,14 @@ use std::io::{BufRead, BufReader};
 use std::collections::HashMap;
 
 fn main () {
-    let file = File::open("./data.txt").unwrap();
+    let file = File::open("./data.txt").expect("could not read file");
     let reader = BufReader::new(file);
     let mut twos = 0;
     let mut threes = 0;
 
     reader.lines().for_each(|i| {
         let mut seen = HashMap::new();
-        i.expect("error reading line")
+        i.unwrap()
         .chars()
         .for_each(|c| {
             *seen.entry(c).or_insert(0) += 1;
